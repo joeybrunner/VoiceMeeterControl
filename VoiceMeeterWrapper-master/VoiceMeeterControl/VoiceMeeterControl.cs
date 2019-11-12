@@ -209,21 +209,27 @@ namespace VoiceMeeterControlSuite
                 {
                     case 0:
                         SwitchToSoundbar();
-                        Thread thread = new Thread(BlinkAndMorphStick);
-                        thread.Start();
+
+                        Object o = "cyan";
+                        Thread thread = new Thread(new ParameterizedThreadStart(BlinkAndMorphStick));
+                        thread.Start(o);
 
                         break;
                     case 1:
                         SwitchToWiredHeadphones();
-                        thread = new Thread(BlinkAndMorphStick);
-                        thread.Start();
-                        
+
+                        o = "cyan";
+                        thread = new Thread(new ParameterizedThreadStart(BlinkAndMorphStick));
+                        thread.Start(o);
+
                         break;
                     case 2:
                         SwitchToWirelessHeadset();
-                        thread = new Thread(BlinkAndMorphStick);
-                        thread.Start();
-                        
+
+                        o = "cyan";
+                        thread = new Thread(new ParameterizedThreadStart(BlinkAndMorphStick));
+                        thread.Start(o);
+
                         break;
                     case 3:
                     case 4:
@@ -236,10 +242,10 @@ namespace VoiceMeeterControlSuite
             }
         }
 
-        public static void BlinkAndMorphStick()
+        public static void BlinkAndMorphStick(object color)
         {
             BlinkStickControlFunction.BlinkColor("blue");
-            BlinkStickControlFunction.MorphColor("cyan");
+            BlinkStickControlFunction.MorphColor(color.ToString());
         }
     }
 
