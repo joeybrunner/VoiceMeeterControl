@@ -58,6 +58,13 @@ namespace VoiceMeeterControlSuite
             TrayIcon.Icon = Resources.wireless_headset;
         }
 
+        private void SwitchToAirpods()
+        {
+            VoiceMeeterControlFunction.ActivateAirpods();
+            DisplayPopup("Airpods");
+            TrayIcon.Icon = Resources.airpods;
+        }
+
         private void MuteMicHandler()
         {
             IsMicMuted = VoiceMeeterControlFunction.MuteMic(IsMicMuted);
@@ -80,6 +87,7 @@ namespace VoiceMeeterControlSuite
             UnregisterHotKey(this.Handle, 2);
             UnregisterHotKey(this.Handle, 3);
             UnregisterHotKey(this.Handle, 4);
+            UnregisterHotKey(this.Handle, 5);
 
             VoiceMeeterControlFunction.CleanupClient();
 
@@ -104,6 +112,11 @@ namespace VoiceMeeterControlSuite
         private void WirelessHeadsetButton(object sender, EventArgs e)
         {
             SwitchToWirelessHeadset();
+        }
+
+        private void AirpodsButton(object sender, EventArgs e)
+        {
+            SwitchToAirpods();
         }
 
         private void MuteMicButton(object sender, EventArgs e)
@@ -134,6 +147,7 @@ namespace VoiceMeeterControlSuite
                 new MenuItem("Soundbar", IconToSoundbar),
                 new MenuItem("Wired Headphones", IconToWiredHeadphones),
                 new MenuItem("Wireless Headset", IconToWirelessHeadset),
+                new MenuItem("Airpods", IconToAirpods),
                 new MenuItem("Exit", IconExit)
             });
 
@@ -153,6 +167,11 @@ namespace VoiceMeeterControlSuite
         void IconToWirelessHeadset(object sender, EventArgs e)
         {
             SwitchToWirelessHeadset();
+        }
+
+        void IconToAirpods(object sender, EventArgs e)
+        {
+            SwitchToAirpods();
         }
 
         void IconExit(object sender, EventArgs e)
@@ -185,6 +204,7 @@ namespace VoiceMeeterControlSuite
             RegisterHotKey(this.Handle, 2, (int)KeyModifier.Control, Keys.NumPad3.GetHashCode());
             RegisterHotKey(this.Handle, 3, (int)KeyModifier.None, Keys.F8.GetHashCode());
             RegisterHotKey(this.Handle, 4, (int)KeyModifier.Control, Keys.NumPad0.GetHashCode());
+            RegisterHotKey(this.Handle, 5, (int)KeyModifier.Control, Keys.NumPad4.GetHashCode());
         }
 
         enum KeyModifier
@@ -236,6 +256,14 @@ namespace VoiceMeeterControlSuite
                         MuteMicHandler();
 
                         break;
+                    case 5:
+                        SwitchToAirpods();
+
+                        o = "cyan";
+                        thread = new Thread(new ParameterizedThreadStart(BlinkAndMorphStick));
+                        thread.Start(o);
+
+                        break;
                     default:
                         break;
                 }
@@ -273,19 +301,24 @@ namespace VoiceMeeterControlSuite
             VmClient.SetParam("Strip(5).A1", 0f);
             VmClient.SetParam("Strip(5).A2", 0f);
             VmClient.SetParam("Strip(5).A3", 0f);
+            VmClient.SetParam("Strip(5).A4", 0f);
+            VmClient.SetParam("Strip(5).A5", 0f);
 
             VmClient.SetParam("Strip(6).A1", 0f);
             VmClient.SetParam("Strip(6).A2", 0f);
             VmClient.SetParam("Strip(6).A3", 0f);
+            VmClient.SetParam("Strip(6).A4", 0f);
+            VmClient.SetParam("Strip(6).A5", 0f);
 
             VmClient.SetParam("Strip(7).A1", 0f);
             VmClient.SetParam("Strip(7).A2", 0f);
             VmClient.SetParam("Strip(7).A3", 0f);
+            VmClient.SetParam("Strip(7).A4", 0f);
+            VmClient.SetParam("Strip(7).A5", 0f);
         }
 
         private static void ActivateDeviceAllStrips(string deviceId)
         {
-
             VmClient.SetParam("Strip(5)." + deviceId, 1f);
             VmClient.SetParam("Strip(6)." + deviceId, 1f);
             VmClient.SetParam("Strip(7)." + deviceId, 1f);
@@ -307,6 +340,12 @@ namespace VoiceMeeterControlSuite
         {
             ResetAllStrips();
             ActivateDeviceAllStrips("A3");
+        }
+
+        public static void ActivateAirpods()
+        {
+            ResetAllStrips();
+            ActivateDeviceAllStrips("A4");
         }
 
         public static bool MuteMic(bool isMicMuted)

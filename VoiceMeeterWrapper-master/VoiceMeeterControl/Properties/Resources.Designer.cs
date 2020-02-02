@@ -63,6 +63,16 @@ namespace VoiceMeeterControl.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon airpods {
+            get {
+                object obj = ResourceManager.GetObject("airpods", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon mic_hot {
             get {
                 object obj = ResourceManager.GetObject("mic_hot", resourceCulture);
