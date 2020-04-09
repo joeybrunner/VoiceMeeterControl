@@ -12,6 +12,8 @@ using VoiceMeeterControl.Properties;
 using BlinkStickDotNet;
 using System.Diagnostics;
 using System.Threading;
+using Microsoft.Win32;
+using IWshRuntimeLibrary;
 
 namespace VoiceMeeterControlSuite
 {
@@ -25,6 +27,7 @@ namespace VoiceMeeterControlSuite
             SwitchToWiredHeadphones();
             InitializeTrayIcon();
             InitializeHotkeys();
+            CreateStartupShortcut();
 
             if (VoiceMeeterControlFunction.IsMicMuted())
             {
@@ -34,7 +37,19 @@ namespace VoiceMeeterControlSuite
             else
             {
                 BlinkStickControlFunction.ChangeColor("cyan");
-            }
+            }   
+        }
+
+        private void CreateStartupShortcut()
+        {
+            WshShell shell = new WshShell();
+
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + @"\VoiceMeeterControl.lnk");
+            
+            shortcut.Description = "Shortcut for VoiceMeeterControl";
+            shortcut.TargetPath = Application.ExecutablePath;
+
+            shortcut.Save();
         }
 
         private void SwitchToSoundbar()
@@ -199,12 +214,11 @@ namespace VoiceMeeterControlSuite
 
         private void InitializeHotkeys()
         {
-            RegisterHotKey(this.Handle, 0, (int)KeyModifier.Control, Keys.NumPad1.GetHashCode());
-            RegisterHotKey(this.Handle, 1, (int)KeyModifier.Control, Keys.NumPad2.GetHashCode());
-            RegisterHotKey(this.Handle, 2, (int)KeyModifier.Control, Keys.NumPad3.GetHashCode());
-            RegisterHotKey(this.Handle, 3, (int)KeyModifier.None, Keys.F8.GetHashCode());
-            RegisterHotKey(this.Handle, 4, (int)KeyModifier.Control, Keys.NumPad0.GetHashCode());
-            RegisterHotKey(this.Handle, 5, (int)KeyModifier.Control, Keys.NumPad4.GetHashCode());
+            RegisterHotKey(this.Handle, 1, (int)KeyModifier.Control, Keys.F1.GetHashCode());
+            RegisterHotKey(this.Handle, 2, (int)KeyModifier.Control, Keys.F2.GetHashCode());
+            RegisterHotKey(this.Handle, 3, (int)KeyModifier.Control, Keys.F3.GetHashCode());
+            RegisterHotKey(this.Handle, 4, (int)KeyModifier.Control, Keys.F4.GetHashCode());
+            RegisterHotKey(this.Handle, 8, (int)KeyModifier.Control, Keys.F8.GetHashCode());
         }
 
         enum KeyModifier
@@ -227,7 +241,8 @@ namespace VoiceMeeterControlSuite
                 
                 switch (id)
                 {
-                    case 0:
+                    // ctrl + F1
+                    case 1:
                         SwitchToSoundbar();
 
                         Object o = "cyan";
@@ -235,7 +250,8 @@ namespace VoiceMeeterControlSuite
                         thread.Start(o);
 
                         break;
-                    case 1:
+                    // ctrl + F2
+                    case 2:
                         SwitchToWiredHeadphones();
 
                         o = "cyan";
@@ -243,7 +259,8 @@ namespace VoiceMeeterControlSuite
                         thread.Start(o);
 
                         break;
-                    case 2:
+                    // ctrl + F3
+                    case 3:
                         SwitchToWirelessHeadset();
 
                         o = "cyan";
@@ -251,12 +268,8 @@ namespace VoiceMeeterControlSuite
                         thread.Start(o);
 
                         break;
-                    case 3:
+                    // ctrl + F4
                     case 4:
-                        MuteMicHandler();
-
-                        break;
-                    case 5:
                         SwitchToAirpods();
 
                         o = "cyan";
@@ -264,6 +277,11 @@ namespace VoiceMeeterControlSuite
                         thread.Start(o);
 
                         break;
+                    // ctrl + F8
+                    case 8:
+                        MuteMicHandler();
+
+                        break;                        
                     default:
                         break;
                 }
