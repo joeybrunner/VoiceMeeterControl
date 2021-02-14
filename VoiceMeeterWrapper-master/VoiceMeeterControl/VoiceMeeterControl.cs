@@ -28,6 +28,7 @@ namespace VoiceMeeterControlSuite
             InitializeTrayIcon();
             InitializeHotkeys();
             CreateStartupShortcut();
+            FixAudioEngine();
 
             if (VoiceMeeterControlFunction.IsMicMuted())
             {
@@ -38,6 +39,22 @@ namespace VoiceMeeterControlSuite
             {
                 BlinkStickControlFunction.ChangeColor("cyan");
             }   
+        }
+
+        private void FixAudioEngine()
+        {
+            Process[] processes = Process.GetProcessesByName("audiodg");
+
+            if (processes.Length > 0)
+            {
+                Process process = processes[0];
+                long affinityMask = (long)process.ProcessorAffinity;
+                affinityMask &= 0x0001; // use only 1st processor
+                process.ProcessorAffinity = (IntPtr)affinityMask;
+
+                // https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.processthread.processoraffinity?redirectedfrom=MSDN&view=net-5.0#System_Diagnostics_ProcessThread_ProcessorAffinity
+            }
+
         }
 
         private void CreateStartupShortcut()
