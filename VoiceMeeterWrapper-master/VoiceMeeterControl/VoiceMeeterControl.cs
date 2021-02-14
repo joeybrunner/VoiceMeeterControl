@@ -24,7 +24,7 @@ namespace VoiceMeeterControlSuite
         public VoiceMeeterControl()
         {
             InitializeComponent();
-            SwitchToWiredHeadphones();
+            SwitchToSoundbar();
             InitializeTrayIcon();
             InitializeHotkeys();
             CreateStartupShortcut();
@@ -93,7 +93,12 @@ namespace VoiceMeeterControlSuite
                 BlinkStickControlFunction.MorphColor("cyan");
             }
         }
-        
+
+        private void RestartHandler()
+        {
+            VoiceMeeterControlFunction.RestartVoicemeeter();
+        }
+
         private void ClosingTime()
         {
             // Unregister hotkeys by id
@@ -218,6 +223,7 @@ namespace VoiceMeeterControlSuite
             RegisterHotKey(this.Handle, 2, (int)KeyModifier.Control, Keys.F2.GetHashCode());
             RegisterHotKey(this.Handle, 3, (int)KeyModifier.Control, Keys.F3.GetHashCode());
             RegisterHotKey(this.Handle, 4, (int)KeyModifier.Control, Keys.F4.GetHashCode());
+            RegisterHotKey(this.Handle, 7, (int)KeyModifier.Control, Keys.F7.GetHashCode());
             RegisterHotKey(this.Handle, 8, (int)KeyModifier.Control, Keys.F8.GetHashCode());
         }
 
@@ -277,6 +283,10 @@ namespace VoiceMeeterControlSuite
                         thread.Start(o);
 
                         break;
+                    case 7:
+                        RestartHandler();
+
+                        break;
                     // ctrl + F8
                     case 8:
                         MuteMicHandler();
@@ -310,12 +320,23 @@ namespace VoiceMeeterControlSuite
             {
                 isMicMuted = false;
             }
-            
+
             return isMicMuted;
+        }
+
+        public static void RestartVoicemeeter()
+        {
+            VmClient.SetParam("Command.Restart", 1.0f);
         }
 
         private static void ResetAllStrips()
         {
+            VmClient.SetParam("Strip(3).A1", 0f);
+            VmClient.SetParam("Strip(3).A2", 0f);
+            VmClient.SetParam("Strip(3).A3", 0f);
+            VmClient.SetParam("Strip(3).A4", 0f);
+            VmClient.SetParam("Strip(3).A5", 0f);
+
             VmClient.SetParam("Strip(5).A1", 0f);
             VmClient.SetParam("Strip(5).A2", 0f);
             VmClient.SetParam("Strip(5).A3", 0f);
@@ -337,6 +358,7 @@ namespace VoiceMeeterControlSuite
 
         private static void ActivateDeviceAllStrips(string deviceId)
         {
+            VmClient.SetParam("Strip(3)." + deviceId, 1f);
             VmClient.SetParam("Strip(5)." + deviceId, 1f);
             VmClient.SetParam("Strip(6)." + deviceId, 1f);
             VmClient.SetParam("Strip(7)." + deviceId, 1f);
