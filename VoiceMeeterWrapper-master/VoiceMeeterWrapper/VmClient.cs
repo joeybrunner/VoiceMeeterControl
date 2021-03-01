@@ -28,9 +28,17 @@ namespace VoiceMeeterWrapper
             
             bool connected = false;
 
+            Process[] processes = Process.GetProcessesByName("voicemeeter8");
+
+            while (processes.Length == 0)
+            {
+                System.Threading.Thread.Sleep(1000);
+                processes = Process.GetProcessesByName("voicemeeter8");
+            }
+
             while (!connected)
             {
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(1000);
                 var lr = VoiceMeeterRemote.Login();
 
                 switch (lr)
@@ -52,7 +60,7 @@ namespace VoiceMeeterWrapper
 
                 if (!connected)
                 {
-                    Dispose();
+                    VoiceMeeterRemote.Logout();
                 }
             }
         }
