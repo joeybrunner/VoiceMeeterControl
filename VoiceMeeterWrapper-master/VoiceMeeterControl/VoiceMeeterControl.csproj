@@ -25,7 +25,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>\\localhost\d%24\VoiceMeeterControl\</InstallUrl>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>11</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -95,28 +95,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlinkStickControlFunction.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="VoiceMeeterControl.cs">
+    <Compile Include="VoiceMeeterControlForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VoiceMeeterControl.Designer.cs">
-      <DependentUpon>VoiceMeeterControl.cs</DependentUpon>
+    <Compile Include="VoiceMeeterControlForm.Designer.cs">
+      <DependentUpon>VoiceMeeterControlForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
+    <Compile Include="VoiceMeeterControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="VoiceMeeterControl.resx">
-      <DependentUpon>VoiceMeeterControl.cs</DependentUpon>
+    <Compile Include="VoiceMeeterControlFunction.cs" />
+    <EmbeddedResource Include="VoiceMeeterControlForm.resx">
+      <DependentUpon>VoiceMeeterControlForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.manifest" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
