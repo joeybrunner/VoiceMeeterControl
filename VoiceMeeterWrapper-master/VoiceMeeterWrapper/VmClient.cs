@@ -19,50 +19,77 @@ namespace VoiceMeeterWrapper
             }
             return System.IO.Path.GetDirectoryName(k.ToString());
         }
+
         public VmClient()
         {
             //Find Voicemeeter dir.
             var vmDir = GetVoicemeeterDir();
             VoiceMeeterRemote.LoadDll(System.IO.Path.Combine(vmDir, "VoicemeeterRemote.dll"));
-            System.Threading.Thread.Sleep(5000);
-            var lr = VoiceMeeterRemote.Login();
+            
+            bool connected = false;
 
-            switch (lr)
+            Process[] processes = Process.GetProcessesByName("voicemeeter8");
+
+            while (processes.Length == 0)
             {
-                case VbLoginResponse.OK:
-                    Console.WriteLine("Attached.");
-                    break;
-                case VbLoginResponse.AlreadyLoggedIn:
-                    Console.WriteLine("Attached. Was already logged in");
-                    break;
-                case VbLoginResponse.OkVoicemeeterNotRunning:
-                    //Launch.
-                    Console.WriteLine("Attached. VM Not running.");
-                    break;
-                default:
-                    throw new InvalidOperationException("Bad response from voicemeeter: " + lr);
+                System.Threading.Thread.Sleep(1000);
+                processes = Process.GetProcessesByName("voicemeeter8");
+            }
+
+            while (!connected)
+            {
+                System.Threading.Thread.Sleep(1000);
+                var lr = VoiceMeeterRemote.Login();
+
+                switch (lr)
+                {
+                    case VbLoginResponse.OK:
+                        Console.WriteLine("Attached.");
+                        connected = true;
+                        break;
+                    case VbLoginResponse.AlreadyLoggedIn:
+                        Console.WriteLine("Attached. Was already logged in");
+                        connected = true;
+                        break;
+                    case VbLoginResponse.OkVoicemeeterNotRunning:
+                        Console.WriteLine("Attached. VM Not running.");
+                        break;
+                    default:
+                        throw new InvalidOperationException("Bad response from voicemeeter: " + lr);
+                }
+
+                if (!connected)
+                {
+                    VoiceMeeterRemote.Logout();
+                }
             }
         }
+
         public float GetParam(string n)
         {
             float output = -1;
             VoiceMeeterRemote.GetParameter(n, ref output);
             return output;
         }
+
         public void SetParam(string n,float v)
         {
             VoiceMeeterRemote.SetParameter(n, v);
         }
+
         public bool Poll()
         {
             return VoiceMeeterRemote.IsParametersDirty() == 1;
         }
+
         private bool disposed = false;
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposed)
@@ -73,6 +100,7 @@ namespace VoiceMeeterWrapper
             }
             disposed = true;
         }
+
         ~VmClient() { Dispose(false); }
         public void OnClose(Action a)
         {
